@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>我的vlog</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm-extend.min.css">
+
+  </head>
+  <body>
+  <div class="page">
+      <header class="bar bar-nav">
+        <h1 class="title">我的vlog</h1>
+      </header>
+      <div class="bar bar-tab"> 
+        <div class="row">
+          <div class="col-50">
+            <a onclick="getList()" class="button button-big button-fill">我的</a></div>
+          <div class="col-50">
+            <form id="signupListImportForm" enctype="multipart/form-data">
+            <input type="file" id="btn_file" style="display:none" name="uploadFiles" onchange="uploadFile()">
+            </form>
+            <a onclick="selectFile()" class="button button-big button-fill">上传</a></div>
+        </div>
+      </div>
+      <div class="content" id="contentMp4">
+       
+ 
+      </div>
+ </div>
+    <script type="text/javascript">
+      function selectFile() {
+        var file = document.getElementById("btn_file").click(); 
+      }
+
+      function uploadFile() { 
+        var file = document.getElementById("btn_file").files[0]; 
+        var formData=new FormData();
+        formData.append("uploadFile", file);
+        $.ajax({ 
+          url:"http://127.0.0.1:8090/api/upload", 
+          type:"post", 
+          data:formData, 
+          processData:false, 
+          contentType:false, 
+          success:function(res){ 
+            if(res){ 
+              alert("上传成功！",res); 
+            } 
+            console.log(res); 
+          }
+        })
+      } 
+
+       window.onload=function (){
+          getList();
+        }
+
+      function getList() {
+          $.getJSON(
+              "http://127.0.0.1:8090/api/list",
+              null,
+              function(result) {
+                var testdiv = document.getElementById("contentMp4");
+                testdiv.innerHTML = "";
+                for ( var i = 0; i <result.length; i++){
+                  testdiv.innerHTML += 
+                  `<div class="card">
+                    <div class="card-content">
+                      <div class="card-content-inner">
+                          <video controls="controls" preload="auto" width="100%" heigt="100%">
+                          <source src=`+ result[i] +` type="video/mp4">
+                        </video>
+                      </div>
+                    </div>
+                  </div>`;
+                } 
+              }
+            );
+      }
+    </script>
+
+
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm-extend.min.js' charset='utf-8'></script>
+
+  </body>
+</html>
